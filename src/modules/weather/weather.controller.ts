@@ -5,12 +5,15 @@ import {
   validateWeatherResponse,
 } from "./utils/weather.controller.utils";
 import { CurrentWeatherParams } from "./weather.model";
+import { ControllerResponseHandler } from "../../shared/controller.handler";
 
 export class WeatherController {
   private readonly httpClient: WeatherService;
+  private readonly responseHandler: ControllerResponseHandler;
 
   constructor() {
     this.httpClient = weatherService;
+    this.responseHandler = new ControllerResponseHandler();
   }
 
   async handleCurrentWeatherRequest(req: any, res: any) {
@@ -37,13 +40,25 @@ export class WeatherController {
     fetchFunction: (params: CurrentWeatherParams) => Promise<any>,
     responseKey: string,
   ) {
-    const weatherParams = parseWeatherParams(req);
-    validateWeatherParams(weatherParams, res);
+    try {
+      const weatherParams = parseWeatherParams(req);
+      validateWeatherParams(weatherParams, res);
 
-    const weatherResponse = await fetchFunction(weatherParams);
+      const weatherResponse = await fetchFunction(weatherParams);
 
-    validateWeatherResponse(weatherResponse, res);
-    return res.status(200).json({ [responseKey]: weatherResponse });
+      validateWeatherResponse(weatherResponse, res);
+      return this.responseHandler.successResponse(
+        res,
+        "Weather data fetched successfully",
+        { [responseKey]: weatherResponse },
+      );
+    } catch (error) {
+      console.log(error);
+      this.responseHandler.internalServerError(
+        res,
+        "Failed to process weather request",
+      );
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { CurrentWeatherParams } from "../weather.model";
+import responseHandler from "../../../shared/controller.handler";
 
 /**
  * Parses latitude and longitude from the request query string.
@@ -17,17 +18,17 @@ export function parseWeatherParams(req: Request) {
  * Validates that weather query parameters are present and numeric.
  *
  * @param weatherParams - Parsed weather query parameters.
- * @param res - Express response object.
+ * @param res
  */
 export function validateWeatherParams(
   weatherParams: CurrentWeatherParams,
   res: Response,
 ) {
   if (!weatherParams.lat || !weatherParams.lon) {
-    res.status(400).json({
-      error: "lat and lon query params are required and must be numbers",
-    });
-    return;
+    responseHandler.badRequest(
+      res,
+      "Missing required query parameters: lat and lon",
+    );
   }
 }
 
@@ -35,16 +36,13 @@ export function validateWeatherParams(
  * Validates that the weather response exists before sending it.
  *
  * @param weatherResponse - Response data from the weather API.
- * @param res - Express response object.
+ * @param res
  */
 export function validateWeatherResponse(
   weatherResponse: unknown,
   res: Response,
 ) {
   if (!weatherResponse) {
-    res.status(404).json({
-      message: "current weather is unavailable",
-    });
-    return;
+    responseHandler.notFound(res, "current weather is unavailable");
   }
 }
