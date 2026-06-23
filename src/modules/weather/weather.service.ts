@@ -1,16 +1,13 @@
 import dotenv from "dotenv";
 import { CurrentWeatherParams } from "./weather.model";
-import {
-  handleRequestErrors,
-  makeCurrentWeatherRequest,
-  makeWeatherForecastRequest,
-} from "./utils/weather.service.utils";
+import { HttpService } from "../../shared/exceptions/service.exception";
 
 dotenv.config();
 
 export class WeatherService {
   private readonly weatherApiUrl: string;
   private readonly weatherApiKey: string;
+  private readonly httpService: HttpService;
 
   constructor() {
     const { WEATHER_API_KEY, WEATHER_API_URL } = process.env;
@@ -21,31 +18,31 @@ export class WeatherService {
 
     this.weatherApiKey = WEATHER_API_KEY;
     this.weatherApiUrl = WEATHER_API_URL;
+    this.httpService = new HttpService(
+      this.weatherApiUrl,
+      this.weatherApiKey,
+      "appid",
+    );
   }
 
   async getCurrentWeather(weatherParams: CurrentWeatherParams) {
     try {
-      const response = await makeCurrentWeatherRequest(
-        weatherParams,
-        this.weatherApiUrl,
-        this.weatherApiKey,
-      );
+      const response = await this.httpService.makeApiRequest("", weatherParams);
       return response.data;
     } catch (error) {
-      handleRequestErrors(error);
+      this.httpService.handleServiceErrors(error);
     }
   }
 
   async getWeatherForecast(weatherParams: CurrentWeatherParams) {
     try {
-      const response = await makeWeatherForecastRequest(
+      const response = await this.httpService.makeApiRequest(
+        "forecast",
         weatherParams,
-        this.weatherApiUrl,
-        this.weatherApiKey,
       );
       return response.data;
     } catch (error) {
-      handleRequestErrors(error);
+      this.httpService.handleServiceErrors(error);
     }
   }
 }
