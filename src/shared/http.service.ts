@@ -36,7 +36,7 @@ export class HttpService {
       if (error.response) {
         const method = error.config?.method?.toUpperCase();
         const url = error.config?.url;
-        const params = this.safetyCheckApiKey(error.config?.params);
+        const params = this.safetyCheckParams(error.config?.params);
 
         throw new Error(
           [
@@ -66,9 +66,14 @@ export class HttpService {
     );
   }
 
-  private safetyCheckApiKey(
+  private safetyCheckParams(
     params: Record<string, unknown> = {},
   ): Record<string, unknown> {
+    /**
+     * Replace or mark API key values for safe logging.
+     * @param params - The request params to inspect.
+     * @returns A copy of params with the API key redacted or marked.
+     */
     const sanitized = { ...(params ?? {}) };
 
     if (!(this.apiKeyName in sanitized)) {
