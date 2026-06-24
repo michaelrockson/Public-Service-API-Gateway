@@ -1,5 +1,5 @@
 import winston from "winston";
-import { config } from "../utils/env.config";
+import { config } from "../env.config";
 
 const isProduction = config.isProduction;
 

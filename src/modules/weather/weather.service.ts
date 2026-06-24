@@ -1,6 +1,6 @@
 import { CurrentWeatherParams } from "./weather.model";
 import { HttpService } from "../../shared/http.service";
-import { config } from "../../utils/env.config";
+import { config } from "../../env.config";
 
 export class WeatherService {
   private readonly weatherApiUrl: string;
