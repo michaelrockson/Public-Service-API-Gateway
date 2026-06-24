@@ -2,7 +2,7 @@ import express, { type Express } from "express";
 import morgan from "morgan";
 import logger from "./shared/server.logger";
 import { apiRouter } from "./modules/routes.registry";
-import { config } from "./utils/env.config";
+import { config } from "./env.config";
 
 const server: Express = express();
 const port: number = Number(config.port) || 3000;

@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { config } from "../utils/env.config";
+import { config } from "../env.config";
 
 export class ControllerResponseHandler {
   constructor() {}
